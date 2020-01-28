@@ -65,27 +65,27 @@
     - monbox_config_ncg
   ignore_errors: true
 
-- name: Run ncg.reload
-  command: ncg.reload.sh
-  tags:
-    - monbox_config
-    - monbox_config_ncg
+# - name: Run ncg.reload
+#   command: ncg.reload.sh
+#   tags:
+#     - monbox_config
+#     - monbox_config_ncg
 
-- name: Copy argo-nagios-ams-publisher - ams-publisher file
-  template: src=ams-publisher.j2
-            dest=/etc/argo-nagios-ams-publisher/ams-publisher.conf
-            owner=nagios group=nagios
-  tags:
-    - monbox_config
-    - monbox_config_ams_publisher
+# - name: Copy argo-nagios-ams-publisher - ams-publisher file
+#   template: src=ams-publisher.j2
+#             dest=/etc/argo-nagios-ams-publisher/ams-publisher.conf
+#             owner=nagios group=nagios
+#   tags:
+#     - monbox_config
+#     - monbox_config_ams_publisher
 
-- name: Enable nagios on boot and start service
-  service: name={{ item }} state=started enabled=yes
-  with_items:
-    - nagios
-  tags:
-    - monbox_config
-    - monbox_config_enable_nagios
+# - name: Enable nagios on boot and start service
+#   service: name={{ item }} state=started enabled=yes
+#   with_items:
+#     - nagios
+#   tags:
+#     - monbox_config
+#     - monbox_config_enable_nagios
 
 - name: Start fetch-crl cron
   service: name=fetch-crl-cron state=started enabled=yes
@@ -102,12 +102,12 @@
     - monbox_config
     - monbox_config_enable_fetch_cron
 
-- name: Enable argo-nagios-ams-publisher on boot and start service
-  service: name=ams-publisher state=started enabled=yes
-  tags:
-    - monbox_config
-    - monbox_config_enable_ams
-  ignore_errors: true
+# - name: Enable argo-nagios-ams-publisher on boot and start service
+#   service: name=ams-publisher state=started enabled=yes
+#   tags:
+#     - monbox_config
+#     - monbox_config_enable_ams
+#   ignore_errors: true
 
 - name: Copy broker-list file
   template: src=broker-list.j2

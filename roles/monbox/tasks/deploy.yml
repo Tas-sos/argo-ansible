@@ -1,7 +1,10 @@
 ---
 
 - name: update cache
-  shell: yum -y makecache
+  yum:
+    # name: '*'
+    state: latest
+    update_cache: yes
 
 - name: Install Nagios
   yum: name=nagios state=latest disablerepo=epel
@@ -27,15 +30,15 @@
     - monbox_install_components
 
 - name: Install Nagios plugins
-  yum: name={{ item }} state=latest
+  yum: name={{ item.name }} state=latest
   with_items: '{{monbox_nagios_plugins | default([]) }}'
   tags:
     - monbox_install
     - monbox_install_nagios_plugins
 
-- name: Install Epel plugins
-  yum: name={{item}} state=latest
-  with_items: '{{monbox_install_nagios_plugins_epel | default([]) }}'
-  tags:
-    - monbox_install
-    - monbox_install_nagios_plugins_epel
+# - name: Install Epel plugins
+#   yum: name={{item.name}} state=latest
+#   with_items: '{{monbox_install_nagios_plugins_epel | default([]) }}'
+#   tags:
+#     - monbox_install
+#     - monbox_install_nagios_plugins_epel
