@@ -1,0 +1,64 @@
+---
+# Based on : https://docs.docker.com/install/linux/docker-ce/centos/
+
+- name: Uninstall old Docker versions
+  yum:
+   name: "{{ item }}"
+   state: absent
+  loop:
+   - docker
+   - docker-client
+   - docker-client-latest
+   - docker-common
+   - docker-latest
+   - docker-latest-logrotate
+   - docker-logrotate
+   - docker-engine
+  tags:
+    - docker_unistall_old_versions
+    - docker
+
+
+- name: Set up Docker repository
+  yum:
+   name: "{{ item }}"
+   state: present
+  loop:
+   - yum-utils
+   - device-mapper-persistent-data
+   - lvm2
+  tags:
+    - docker_set_up_repository
+    - docker
+
+- name: Add Docker repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+  tags:
+    - docker_add_repository
+    - docker
+
+
+- name: Install the latest version of Docker Engine - Community and containerd
+  yum:
+   name: "{{ item }}"
+   state: present
+   update_cache: yes
+  loop:
+   - docker-ce
+   - docker-ce-cli
+   - containerd.io
+  tags:
+    - docker_install_docker
+    - docker
+
+
+- name: Start and enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true
+  tags:
+    - docker_start_enable
+    - docker

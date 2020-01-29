@@ -65,11 +65,11 @@
     - monbox_config_ncg
   ignore_errors: true
 
-# - name: Run ncg.reload
-#   command: ncg.reload.sh
-#   tags:
-#     - monbox_config
-#     - monbox_config_ncg
+- name: Run ncg.reload
+  command: ncg.reload.sh
+  tags:
+    - monbox_config
+    - monbox_config_ncg
 
 # - name: Copy argo-nagios-ams-publisher - ams-publisher file
 #   template: src=ams-publisher.j2
@@ -79,13 +79,13 @@
 #     - monbox_config
 #     - monbox_config_ams_publisher
 
-# - name: Enable nagios on boot and start service
-#   service: name={{ item }} state=started enabled=yes
-#   with_items:
-#     - nagios
-#   tags:
-#     - monbox_config
-#     - monbox_config_enable_nagios
+- name: Enable nagios on boot and start service
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - nagios
+  tags:
+    - monbox_config
+    - monbox_config_enable_nagios
 
 - name: Start fetch-crl cron
   service: name=fetch-crl-cron state=started enabled=yes
