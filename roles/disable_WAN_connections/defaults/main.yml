@@ -1,0 +1,5 @@
+---
+# defaults file for disable_WAN_connections
+
+wan_interface: eth2
+

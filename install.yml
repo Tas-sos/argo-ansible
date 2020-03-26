@@ -116,8 +116,9 @@
 - hosts: c_private
   become: yes
   roles:
-    - { role: through_http_proxy }
-    - { role: cloudera_internal_node }
+    - { role: through_http_proxy        }
+    - { role: disable_WAN_connections   }
+    - { role: cloudera_internal_node    }
 
 
 - hosts: c_manager

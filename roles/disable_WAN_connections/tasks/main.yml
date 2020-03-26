@@ -1,0 +1,8 @@
+---
+# tasks file for disable_WAN_connections
+
+- name: Make WAN interface (internet connection) down [{{wan_interface}}]
+  shell: ifdown '{{wan_interface}}'
+  register: ifdown
+  changed_when: (ifdown.rc == 0) and (ifdown.stdout != '')
+
