@@ -1,0 +1,4 @@
+[submodule "roles/agora"]
+	path = roles/agora
+	url = https://gitlab.grnet.gr/devs/agora/automation
+	branch = restructure3-role
