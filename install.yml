@@ -153,3 +153,8 @@
     - { role: eseal,    task: main,      tags: eseal            }
 
 
+- hosts: gocdb
+  become: yes
+  roles:
+    - { role: mysql,  task: backup,  tags: mysql-backup   }
+
