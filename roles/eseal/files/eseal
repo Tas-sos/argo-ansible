@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Eseal Linux service controller script
+cd "/opt/eseal/bin"
+{{ eseal_root_dir }}
+
+case "$1" in
+    start)
+        ./start-eseal.sh
+        ;;
+    stop)
+        ./stop-eseal.sh
+        ;;
+    *)  
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+
+
