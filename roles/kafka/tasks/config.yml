@@ -1,0 +1,160 @@
+---
+# tasks file for Apache Kafka system configurations
+
+
+# System groups & users.
+
+- name: "Ensure group '{{ kafka_group }}' exists"
+  group:
+    name: "{{ kafka_group }}"
+    system: yes
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:group
+
+- name: "Ensure user '{{ kafka_user }}' exists"
+  user:
+    name: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    create_home: no
+    system: yes
+    comment: Apache Kafka user
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:user
+
+
+# Format & Mount external disks
+
+- name: Find external disks!
+  debug:
+    msg: "Use 'lsblk', `fdisk -l` or `df -h` to find the the of the external disk for Kafka DATA."
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:disk
+
+
+- name: "Create xfs filesystem on {{ external_kafka_disk }} for Apache Kafka data and check disk blocks"
+  filesystem:
+    fstype: xfs
+    dev: "{{ external_kafka_disk }}"
+    opts: -CC
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:disk
+    - kafka:data_directory
+    - kafka:create_filesystem
+
+- name: "Create {{ kafka_log_dirs }} directory for Apache Kafka DATA if it does not exist"
+  file:
+    path: "{{ kafka_log_dirs }}"
+    state: directory
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: '0755'
+    recurse: yes
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:disk
+    - kafka:data_directory
+    - kafka:create_data_directory
+
+
+- name: "Mount {{ external_kafka_disk }} to {{ kafka_log_dirs }}"
+  mount:
+    path: "{{ kafka_log_dirs }}"
+    src: "{{ external_kafka_disk }}"
+    fstype: xfs
+    state: mounted
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:disk
+    - kafka:data_directory
+    - kafka:mount
+
+
+- name: "Set appropriate ownership, group and permissions in {{ kafka_root }}"
+  file:
+    path: "{{ kafka_root }}"
+    state: directory
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: '0755'
+    recurse: yes
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:disk
+
+
+- name: "Create {{ kafka_logs }} directory for Apache Kafka LOGs if it does not exist"
+  file:
+    path: "{{ kafka_logs }}"
+    state: directory
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    mode: '0755'
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:logs
+
+
+
+
+# System heap
+
+
+# System SWAP
+
+
+
+- name: Local DNS for cluster
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {% for host in groups['kafka_nodes'] %}
+      {% set outer_loop = loop %}
+      {% for lanIP in hostvars[host].ansible_all_ipv4_addresses | sort %}
+      {% if  lanIP | ipaddr('private') %}
+      {{ lanIP }}    kfk{{ outer_loop.index }}
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK for Apache Kafka"
+    backup: yes
+  notify: 
+    - Restart Kafka
+    - Wait Kafka to startup
+  tags:
+    - kafka
+    - kafka:config
+    - kafka:install
+    - kafka:system
+    - kafka:hosts
+    - kafka:dns
+
+
+
+
